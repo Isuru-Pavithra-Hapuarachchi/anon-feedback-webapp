@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome | Anonymous Messaging</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --primary-light: #8c7ae6;
+            --primary-gradient: linear-gradient(135deg, #6c5ce7, #7b68ee);
+            --accent: #ff7675;
+            --text: #2d3436;
+            --text-light: #636e72;
+            --bg: #f5f6fa;
+            --card-bg: #ffffff;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --border-radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+        }
+
+        .welcome-container {
+            max-width: 860px;
+            width: 100%;
+            perspective: 1000px;
+            margin: 2rem auto;
+        }
+
+        .welcome-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 3rem 2.5rem;
+            transform-style: preserve-3d;
+            transform: translateZ(0);
+            transition: all 0.4s ease;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .welcome-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--primary-gradient);
+        }
+
+        .welcome-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .welcome-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.2;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            margin-bottom: 2.5rem;
+            max-width: 600px;
+            font-weight: 400;
+        }
+
+        .cta-section {
+            margin: 1rem 0 2.5rem;
+            width: 100%;
+            max-width: 350px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: var(--primary-gradient);
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(108, 92, 231, 0.35);
+            width: 100%;
+            text-align: center;
+            border: none;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .cta-button::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #8c7ae6, #9b59b6);
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.3s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(108, 92, 231, 0.5);
+        }
+
+        .cta-button:hover::after {
+            opacity: 1;
+        }
+
+        .login-link {
+            margin-top: 1.2rem;
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        .login-link a {
+            color: var(--primary);
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .login-link a::after {
+            content: "";
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .login-link a:hover::after {
+            width: 100%;
+        }
+
+        .features-section {
+            margin-top: 1rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+            text-align: center;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .feature {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 1.8rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(108, 92, 231, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+            border-color: rgba(108, 92, 231, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            background: rgba(108, 92, 231, 0.1);
+            height: 70px;
+            width: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .feature:hover .feature-icon {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .feature-title {
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            font-size: 1.2rem;
+            color: var(--text);
+        }
+
+        .feature-desc {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            line-height: 1.5;
+        }
+
+        .testimonials {
+            margin-top: 3rem;
+        }
+
+        .testimonial {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            position: relative;
+            border-left: 4px solid var(--primary);
+        }
+
+        .quote {
+            font-size: 1.1rem;
+            font-style: italic;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .quote::before {
+            content: """;
+            font-size: 3rem;
+            color: rgba(108, 92, 231, 0.2);
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            line-height: 1;
+        }
+
+        .author {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .footer {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .bounce-in {
+            animation: bounceIn 1s ease-out;
+        }
+
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.3); }
+            50% { opacity: 1; transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .feature:nth-child(1) { animation-delay: 0.1s; }
+        .feature:nth-child(2) { animation-delay: 0.3s; }
+        .feature:nth-child(3) { animation-delay: 0.5s; }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .welcome-card {
+                padding: 2rem 1.5rem;
+            }
+            
+            .welcome-title {
+                font-size: 2rem;
+            }
+            
+            .welcome-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+            
+            .feature {
+                padding: 1.5rem;
+            }
+            
+            .cta-button {
+                padding: 0.9rem 1.8rem;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .welcome-title {
+                font-size: 1.8rem;
+            }
+            
+            .welcome-subtitle {
+                font-size: 1rem;
+                margin-bottom: 2rem;
+            }
+            
+            .feature-icon {
+                height: 60px;
+                width: 60px;
+                font-size: 1.8rem;
+            }
+            
+            .feature-title {
+                font-size: 1.1rem;
+            }
+            
+            .section-title {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="welcome-container">
+        <div class="welcome-card bounce-in">
+            <div class="welcome-content">
+                <h1 class="welcome-title">Create Your Anonymous Message Link Now!</h1>
+                <p class="welcome-subtitle">Create your personal link to receive honest, anonymous messages from friends and followers. Share your thoughts without revealing your identity.</p>
+                
+                <div class="cta-section">
+                    <a href="{{ url_for('signup') }}" class="cta-button">
+                        <i class="fas fa-arrow-right-to-bracket" style="margin-right: 8px;"></i>
+                        Create Your Link
+                    </a>
+                    
+                    <p class="login-link">Already have an account? <a href="{{ url_for('login') }}">Log in</a></p>
+                </div>
+                
+                <div class="features-section">
+                    <h2 class="section-title">Why Choose Us</h2>
+                    
+                    <div class="features">
+                        <div class="feature fade-in-up">
+                            <div class="feature-icon">
+                                <i class="fas fa-user-secret"></i>
+                            </div>
+                            <h3 class="feature-title">100% Anonymous</h3>
+                            <p class="feature-desc">Senders stay completely hidden. Share honest thoughts without revealing your identity.</p>
+                        </div>
+                        
+                        <div class="feature fade-in-up">
+                            <div class="feature-icon">
+                                <i class="fas fa-share-nodes"></i>
+                            </div>
+                            <h3 class="feature-title">Easy Sharing</h3>
+                            <p class="feature-desc">Share your unique link on social media or directly with friends. Get responses from anywhere.</p>
+                        </div>
+                        
+                        <div class="feature fade-in-up">
+                            <div class="feature-icon">
+                                <i class="fas fa-comment-dots"></i>
+                            </div>
+                            <h3 class="feature-title">Real Messages</h3>
+                            <p class="feature-desc">Get authentic feedback and genuine thoughts from the people around you.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonials">
+                    <div class="testimonial">
+                        <p class="quote">This platform has changed how I connect with my audience. The anonymous feedback I receive is honest and helpful!</p>
+                        <p class="author">- Happy User</p>
+                    </div>
+                </div>
+                
+               
+                <div class="footer">
+                <p>© 2025 <a href="https://vizifydesign.web.app/" target="_blank" style="color: inherit; text-decoration: none;">VIZIFY DESIGN</a>. All rights reserved.</p>
+                </div >
+            </div>
+        </div>
+    </div>
+</body>
+</html>

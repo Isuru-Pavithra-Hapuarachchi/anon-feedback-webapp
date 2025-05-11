@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Anonymous Messaging</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --primary-light: #a29bfe;
+            --primary-dark: #5b52d1;
+            --primary-gradient: linear-gradient(135deg, #6c5ce7, #8c7ae6);
+            --text: #2d3436;
+            --text-light: #636e72;
+            --border: #e2e8f0;
+            --bg: #f5f6fa;
+            --card-bg: #ffffff;
+            --success: #00b894;
+            --success-light: rgba(0, 184, 148, 0.1);
+            --error: #e74c3c;
+            --shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+            --border-radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 20px;
+            flex: 1;
+        }
+
+        /* Header/Navigation */
+        .navbar {
+            background-color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 0.8rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo i {
+            font-size: 1.2rem;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .user-avatar {
+            background: var(--primary-gradient);
+            color: white;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .username {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .username span:first-child {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .username span:last-child {
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--error);
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0.5rem 0.8rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .logout-btn:hover {
+            background-color: rgba(231, 76, 60, 0.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 2rem 0;
+        }
+
+        .section {
+            margin-bottom: 2.5rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.2rem;
+        }
+
+        .section-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            color: var(--success);
+            background-color: var(--success-light);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+        }
+
+        .status-indicator.offline {
+            color: var(--error);
+            background-color: rgba(231, 76, 60, 0.1);
+        }
+
+        .status-indicator .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.offline .dot {
+            background-color: var(--error);
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Share Card */
+        .share-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 1.8rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .share-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.2rem;
+        }
+
+        .share-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .share-subtitle {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .share-link-container {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .share-link {
+            display: flex;
+            gap: 10px;
+        }
+
+        .share-input {
+            flex: 1;
+            padding: 1rem 1.2rem;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 1rem;
+            background-color: #f8fafc;
+            transition: all 0.2s ease;
+        }
+
+        .share-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+        }
+
+        .copy-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .copy-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .copy-btn i {
+            font-size: 0.9rem;
+        }
+
+        .share-hint {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .share-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 1.2rem;
+        }
+
+        .share-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.7rem 1.2rem;
+            border-radius: 8px;
+            background-color: #f8fafc;
+            color: var(--text);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid var(--border);
+        }
+
+        .share-option:hover {
+            background-color: #edf2f7;
+        }
+
+        .share-option i {
+            font-size: 1.1rem;
+            color: #4267B2;
+        }
+
+        .share-option:nth-child(2) i {
+            color: #1DA1F2;
+        }
+
+        .share-option:nth-child(3) i {
+            color: #25D366;
+        }
+
+        /* Messages Section */
+        .messages-section {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 1.8rem;
+            box-shadow: var(--shadow);
+        }
+
+        .messages-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .messages-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .message-count {
+            font-size: 0.9rem;
+            padding: 0.2rem 0.8rem;
+            background-color: rgba(108, 92, 231, 0.1);
+            color: var(--primary);
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .message-list {
+            display: grid;
+            gap: 1.2rem;
+        }
+
+        .message-card {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1.5rem;
+            position: relative;
+            animation: fadeIn 0.5s ease;
+            border-left: 4px solid var(--primary);
+            transition: all 0.2s ease;
+        }
+
+        .message-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .message-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.8rem;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            align-items: center;
+        }
+
+        .message-anonymous {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .message-number {
+            font-weight: 600;
+            color: var(--primary);
+            background-color: rgba(108, 92, 231, 0.1);
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .message-content {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: var(--text);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-light);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: var(--primary-light);
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 1.3rem;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            font-size: 0.95rem;
+            max-width: 450px;
+            margin: 0 auto;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: white;
+            padding: 1.5rem 0;
+            text-align: center;
+            margin-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--success);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast i {
+            font-size: 1.2rem;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .share-link {
+                flex-direction: column;
+            }
+
+            .copy-btn {
+                width: 100%;
+                padding: 0.8rem;
+                justify-content: center;
+            }
+
+            .share-options {
+                flex-wrap: wrap;
+            }
+
+            .share-option {
+                flex: 1;
+                min-width: 120px;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .nav-container {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+                padding: 1rem 20px;
+            }
+
+            .user-menu {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .share-heading {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .messages-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .share-card, .messages-section {
+                padding: 1.2rem;
+            }
+
+            .message-card {
+                padding: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Navigation -->
+    <div class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-comment-dots"></i>
+                <span>Anonymous Messages</span>
+            </div>
+            <div class="user-menu">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        {{ session['username'][0].upper() }}
+                    </div>
+                    <div class="username">
+                        <span>Logged in as</span>
+                        <span>{{ session['username'] }}</span>
+                    </div>
+                </div>
+                <a href="{{ url_for('logout') }}" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="main-content">
+            <div class="section">
+                <div class="section-header">
+                    <h1 class="section-title">Dashboard</h1>
+                    <div class="status-indicator" id="connection-status">
+                        <span class="dot"></span>
+                        <span>Live updates active</span>
+                    </div>
+                </div>
+
+                <!-- Share Card -->
+                <div class="share-card fade-in">
+                    <div class="share-heading">
+                        <h2 class="share-title">Your Anonymous Link</h2>
+                    </div>
+                    <p class="share-subtitle">Share this link to receive anonymous messages from your friends, followers, or anyone you want!</p>
+                    
+                    <div class="share-link-container">
+                        <div class="share-link">
+                            <input type="text" id="share-link" class="share-input" value="Send me an anonymous message! {{ request.host_url }}m/{{ link_id }}" readonly>
+                            <button class="copy-btn" onclick="copyLink()">
+                                <i class="fas fa-copy"></i>
+                                <span>Copy</span>
+                            </button>
+                        </div>
+                    </div>
+
+<!--
+                   <div class="share-card fade-in">
+    			<div class="share-heading">
+        		<h2 class="share-title">Your Anonymous Link</h2>
+    			</div>
+    			<p class="share-subtitle">Share this link to receive anonymous messages from your friends, followers, or anyone you want!</p>
+
+			    <div class="share-link-container">
+    			    <!-- New message added here -->
+   <!--    				 <p class="share-callout"> Send me an anonymous message!</p>
+
+		        <div class="share-link">
+           		 <input type="text" id="share-link" class="share-input" value="{{ request.host_url }}m/{{ link_id }}" readonly>
+          		  <button class="copy-btn" onclick="copyLink()">
+               			 <i class="fas fa-copy"></i>
+                		<span>Copy</span>
+           			 </button>
+       			 </div>
+   		 </div>
+		</div>
+
+-->
+
+                    
+                    <p class="share-hint">
+                        <i class="fas fa-info-circle"></i>
+                        <span>This link is unique to your account. Anyone with this link can send you anonymous messages.</span>
+                    </p>
+                    
+                    <div class="share-options">
+                        <div class="share-option" onclick="shareToSocial('facebook')">
+                            <i class="fab fa-facebook"></i>
+                            <span>Facebook</span>
+                        </div>
+                        <div class="share-option" onclick="shareToSocial('twitter')">
+                            <i class="fab fa-twitter"></i>
+                            <span>Twitter</span>
+                        </div>
+                        <div class="share-option" onclick="shareToSocial('whatsapp')">
+                            <i class="fab fa-whatsapp"></i>
+                            <span>WhatsApp</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Messages Section -->
+                <div class="messages-section fade-in">
+                    <div class="messages-header">
+                        <h2 class="messages-title">
+                            <i class="fas fa-envelope-open-text"></i>
+                            <span>Messages Received</span>
+                        </h2>
+                        <div class="message-count" id="message-count">
+                            {% if messages %}
+                            {{ messages|length }}
+                            {% else %}
+                            0
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div id="message-list" class="message-list">
+                        {% if messages %}
+                            {% for msg in messages %}
+                            <div class="message-card">
+                                <div class="message-meta">
+                                    <div class="message-anonymous">
+                                        <i class="fas fa-user-secret"></i>
+                                        <span>Anonymous</span>
+                                    </div>
+                                    <div class="message-number">#{{ loop.index }}</div>
+                                </div>
+                                <div class="message-content">{{ msg[0] }}</div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty-state" id="empty-state">
+                                <i class="fas fa-inbox"></i>
+                                <h3>No messages yet</h3>
+                                <p>Share your link to start receiving anonymous messages from others. Check back here to see them!</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>© 2025 VIZIFY DESIGN. All rights reserved.</p>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toast-message">Link copied to clipboard!</span>
+    </div>
+
+    <script>
+        // Copy to clipboard functionality
+        function copyLink() {
+            const linkInput = document.getElementById('share-link');
+            linkInput.select();
+            document.execCommand('copy');
+            
+            showToast('Link copied to clipboard!');
+        }
+        
+        // Show toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            toastMessage.textContent = message;
+            
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Social sharing functions
+        function shareToSocial(platform) {
+            const link = document.getElementById('share-link').value;
+            let shareUrl;
+            
+            switch(platform) {
+                case 'facebook':
+                    shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}`;
+                    break;
+                case 'twitter':
+                    shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent('Hi !')}%20${encodeURIComponent(link)}`;
+                    break;
+                case 'whatsapp':
+                    shareUrl = `https://wa.me/?text=${encodeURIComponent('Hi !')}%20${encodeURIComponent(link)}`;
+                    break;
+            }
+            
+            window.open(shareUrl, '_blank');
+        }
+        
+        // Auto-refresh messages function
+        function refreshMessages() {
+            fetch(window.location.href + '?ajax=true')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.messages.length > 0) {
+                        const messageList = document.getElementById('message-list');
+                        const emptyState = document.getElementById('empty-state');
+                        const messageCount = document.getElementById('message-count');
+                        
+                        // Clear empty state if it exists
+                        if (emptyState) {
+                            messageList.innerHTML = '';
+                        }
+                        
+                        // Update message count
+                        messageCount.textContent = data.messages.length;
+                        
+                        // Remove existing messages and add new ones
+                        messageList.innerHTML = '';
+                        
+                        data.messages.forEach((msg, index) => {
+                            const messageCard = document.createElement('div');
+                            messageCard.className = 'message-card';
+                            
+                            messageCard.innerHTML = `
+                                <div class="message-meta">
+                                    <div class="message-anonymous">
+                                        <i class="fas fa-user-secret"></i>
+                                        <span>Anonymous</span>
+                                    </div>
+                                    <div class="message-number">#${index + 1}</div>
+                                </div>
+                                <div class="message-content">${msg}</div>
+                            `;
+                            
+                            messageList.appendChild(messageCard);
+                        });
+                        
+                        // Show notification if new messages received
+                        if (data.messages.length > parseInt(messageCount.textContent || 0)) {
+                            showToast('New message received!');
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error refreshing messages:', error);
+                    const statusIndicator = document.getElementById('connection-status');
+                    statusIndicator.classList.add('offline');
+                    statusIndicator.innerHTML = '<span class="dot"></span><span>Offline</span>';
+                });
+        }
+        
+        // Set up auto-refresh interval (every 15 seconds)
+        setInterval(refreshMessages, 15000);
+        
+        // Initial setup
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check connection status on page load
+            const statusIndicator = document.getElementById('connection-status');
+            if (navigator.onLine) {
+                statusIndicator.classList.remove('offline');
+                statusIndicator.innerHTML = '<span class="dot"></span><span>Live updates active</span>';
+            } else {
+                statusIndicator.classList.add('offline');
+                statusIndicator.innerHTML = '<span class="dot"></span><span>Offline</span>';
+            }
+            
+            // Listen for online/offline events
+            window.addEventListener('online', function() {
+                statusIndicator.classList.remove('offline');
+                statusIndicator.innerHTML = '<span class="dot"></span><span>Live updates active</span>';
+                refreshMessages(); // Refresh messages when coming back online
+            });
+            
+            window.addEventListener('offline', function() {
+                statusIndicator.classList.add('offline');
+                statusIndicator.innerHTML = '<span class="dot"></span><span>Offline</span>';
+            });
+        });
+    </script>
+</body>
+</html>

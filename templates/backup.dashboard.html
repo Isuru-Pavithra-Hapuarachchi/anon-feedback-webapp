@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Messages | NGL</title>
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --primary-light: #a29bfe;
+            --text: #2d3436;
+            --text-light: #636e72;
+            --border: #dfe6e9;
+            --bg: #f5f6fa;
+            --card-bg: #ffffff;
+            --success: #00b894;
+            --error: #d63031;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .user-info {
+            font-weight: 500;
+            color: var(--primary);
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--error);
+            cursor: pointer;
+            font-size: 1rem;
+            text-decoration: underline;
+        }
+
+        .share-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .share-title {
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .share-link {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .share-link input {
+            flex: 1;
+            padding: 0.8rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .copy-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .copy-btn:hover {
+            background-color: var(--primary-light);
+        }
+
+        .share-hint {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-top: 0.5rem;
+        }
+
+        .messages-section {
+            margin-top: 2rem;
+        }
+
+        .section-title {
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+
+        .message-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .message-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            position: relative;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .message-card::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: var(--primary);
+            border-radius: 4px 0 0 4px;
+        }
+
+        .message-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .message-content {
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-light);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .share-link {
+                flex-direction: column;
+            }
+
+            .copy-btn {
+                padding: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="user-info">Logged in as <strong>{{ session['username'] }}</strong></div>
+            <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+        </div>
+
+        <div class="share-section">
+            <h2 class="share-title">Your Anonymous Link</h2>
+            <div class="share-link">
+                <input type="text" id="share-link" value="{{ request.host }}/m/{{ link_id }}" readonly>
+                <button class="copy-btn" onclick="copyLink()">Copy</button>
+            </div>
+            <p class="share-hint">Share this link to receive anonymous messages</p>
+        </div>
+
+        <div class="messages-section">
+            <h2 class="section-title">Messages Received</h2>
+            
+            {% if messages %}
+            <div class="message-list">
+                {% for msg in messages %}
+                <div class="message-card">
+                    <div class="message-meta">
+                        <span>Anonymous</span>
+                        <span>#{{ loop.index }}</span>
+                    </div>
+                    <div class="message-content">{{ msg[0] }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <p>No messages yet. Share your link to receive anonymous messages!</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        function copyLink() {
+            const linkInput = document.getElementById('share-link');
+            linkInput.select();
+            document.execCommand('copy');
+            
+            // Change button text temporarily
+            const btn = document.querySelector('.copy-btn');
+            btn.textContent = 'Copied!';
+            setTimeout(() => {
+                btn.textContent = 'Copy';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>~
