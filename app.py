@@ -6,7 +6,7 @@ import re
 
 
 app = Flask(__name__)
-app.secret_key = '19990621'  # Replace with something strong
+app.secret_key = 'Replace with something strong'  
 
 # Database setup
 def init_db():
